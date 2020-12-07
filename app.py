@@ -18,16 +18,20 @@ import werkzeug.utils
 
 app = flask.Flask(__name__, template_folder='templates')
 
-path_to_image_classifier = 'models/cnn_other'
+path_to_image_classifier = 'models/cnn2.pickle'
 
 CATEGORIES = ['buildings', 'forest', 'glacier', 'mountain', 'sea', 'street']
 
 
-try:
-    image_classifier = tensorflow.keras.models.load_model(path_to_image_classifier)
-except EOFError as e:
-    print(e)
+# try:
+#     image_classifier = tensorflow.keras.models.load_model(path_to_image_classifier)
+# except EOFError as e:
+#     print(e)
 
+
+
+with open(path_to_image_classifier, 'rb') as f:
+    image_classifier = pickle.load(f)
 
 
 
@@ -53,7 +57,6 @@ def classify_image():
         # Just render the initial form, to get input
         return(flask.render_template('classify_image.html'))
 
-    
     
     if flask.request.method == 'POST':
 
