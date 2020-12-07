@@ -18,20 +18,20 @@ import werkzeug.utils
 
 app = flask.Flask(__name__, template_folder='templates')
 
-path_to_image_classifier = 'models/cnn2.pickle'
+path_to_image_classifier = 'models/cnn_new'
 
 CATEGORIES = ['buildings', 'forest', 'glacier', 'mountain', 'sea', 'street']
 
 
-# try:
-#     image_classifier = tensorflow.keras.models.load_model(path_to_image_classifier)
-# except EOFError as e:
-#     print(e)
+try:
+    image_classifier = tensorflow.keras.models.load_model(path_to_image_classifier)
+except EOFError as e:
+    print(e)
 
 
 
-with open(path_to_image_classifier, 'rb') as f:
-    image_classifier = pickle.load(f)
+# with open(path_to_image_classifier, 'rb') as f:
+#     image_classifier = pickle.load(f)
 
 
 
