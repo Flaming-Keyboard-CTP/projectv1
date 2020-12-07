@@ -99,9 +99,7 @@ def classify_image():
             # Get the value at index of CATEGORIES
             prediction = CATEGORIES[prediction[0]]
             
-            return flask.render_template('main.html', 
-                prediction=prediction,
-                filename=filename)
+            return flask.render_template('classify_image.html', prediction=str(prediction))
         else:
             return flask.redirect(flask.request.url)
     
