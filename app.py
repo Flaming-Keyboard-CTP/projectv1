@@ -9,29 +9,30 @@ import numpy as np
 import tensorflow
 import cv2
 from cv2 import cv2
-
+from skimage import feature, color, data
 import skimage
 import skimage.io
 import skimage.transform
+import matplotlib.pyplot as plt
 
 import werkzeug.utils
 
 app = flask.Flask(__name__, template_folder='templates')
 
-path_to_image_classifier = 'models/cnn_new'
+path_to_image_classifier = 'models/imgage-classifier.pickle'
 
-CATEGORIES = ['buildings', 'forest', 'glacier', 'mountain', 'sea', 'street']
-
-
-try:
-    image_classifier = tensorflow.keras.models.load_model(path_to_image_classifier)
-except EOFError as e:
-    print(e)
+CATEGORIES=['Buildings','Forest', 'Glacier','Mountain','Sea','Street']
 
 
+# try:
+#     image_classifier = tensorflow.keras.models.load_model(path_to_image_classifier)
+# except EOFError as e:
+#     print(e)
 
-# with open(path_to_image_classifier, 'rb') as f:
-#     image_classifier = pickle.load(f)
+
+
+with open(path_to_image_classifier, 'rb') as f:
+    image_classifier = pickle.load(f)
 
 
 
@@ -63,6 +64,27 @@ def classify_image():
         if 'file' not in flask.request.files:
             return flask.redirect(flask.request.url)
 
+        # def scene_predict(img_path):
+        #     image = cv2.imread(img_path)
+        #     ip_image = Image.open(img_path)
+        #     image = cv2.resize(image,(150,150))
+        #     prd_image_data = hog_data_extractor(img_path)
+        #     scene_predicted = image_classifier.predict(prd_image_data.reshape(1, -1))[0]
+        #     fig, ax = plt.subplots(1, 2, figsize=(12, 6),
+        #                     subplot_kw=dict(xticks=[], yticks=[]))
+        #     ax[0].imshow(ip_image)
+        #     ax[0].set_title('input image')
+
+        #     ax[1].imshow(cv2.cvtColor(image,cv2.COLOR_BGR2RGB))
+        #     ax[1].set_title('Scene predicted :'+ CATEGORIES[scene_predicted]);
+
+        # ip_img_folder = '../input/seg_pred/seg_pred/'
+        # ip_img_files = ['222.jpg','121.jpg','88.jpg','398.jpg','839.jpg', '520.jpg']
+        # scene_predicted = [scene_predict(os.path.join(ip_img_folder,img_file))for img_file in ip_img_files]
+
+
+
+
         # print(dir(flask.request))
         # Get file object from user input.
         file = flask.request.files['file']
@@ -89,15 +111,24 @@ def classify_image():
             # img = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
 
             # Resize the image to match the input the model will accept
-            img = cv2.resize(img, (50,50))
+            img = cv2.resize(img, (150,150))
+            
+
+            def hog_data_extractor(image):
+                hog_data = feature.hog(image)/255.0
+                return hog_data
+
+            
+            prd_image_data = hog_data_extractor(img)
+            
             # Reshape the image into shape (1, 64, 64, 3)
-            img = np.asarray([img])
+            #img = np.asarray([img])
 
             # Get prediction of image from classifier
-            prediction = np.argmax(image_classifier.predict(img), axis=-1)
+            prediction = image_classifier.predict(prd_image_data.reshape(1, -1))[0]
 
             # Get the value at index of CATEGORIES
-            prediction = CATEGORIES[prediction[0]]
+            prediction = CATEGORIES[prediction]
             
             return flask.render_template('classify_image.html', prediction=str(prediction))
         else:
