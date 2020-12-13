@@ -25,3 +25,7 @@ The dataset is intel image classifier dataset from kaggle. https://www.kaggle.co
 * [Aashish Dhungel](https://www.linkedin.com/in/aasish-dhungel/)
 * [Kamrul Alam](https://www.linkedin.com/in/kamrulalamqc/)
 
+## TO see app
+* pip install -r requirements.txt
+* run app.py
+* go to localhost:5000
